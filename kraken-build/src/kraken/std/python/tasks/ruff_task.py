@@ -22,8 +22,6 @@ class RuffTask(EnvironmentAwareDispatchTask):
     config_file: Property[Path]
     additional_args: Property[list[str]] = Property.default_factory(list)
 
-    # EnvironmentAwareDispatchTask
-
     def get_execute_command(self) -> list[str]:
         command = [
             self.ruff_bin.get(),
