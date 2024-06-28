@@ -1,0 +1,5 @@
+[[entries]]
+id = "92aa4100-c459-4ca1-8fbe-d79aec3b419f"
+type = "feature"
+description = "Enable Ruff through RuffTask for formatting and linting"
+author = "alexandre.ghelfi@helsing.ai"
