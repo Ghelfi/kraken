@@ -48,8 +48,8 @@ def ruff(
     project: Project | None = None,
     config_file: Path | Supplier[Path] | None = None,
     additional_args: Sequence[str] | Supplier[Sequence[str]] = (),
-    version_spec: str | None = None,
     additional_requirements: Sequence[str] = (),
+    version_spec: str | None = None,
 ) -> RuffTasks:
     """Creates three tasks for formatting and linting your Python project with Ruff.
 
