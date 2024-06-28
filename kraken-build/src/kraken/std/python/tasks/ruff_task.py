@@ -16,9 +16,9 @@ class RuffTask(EnvironmentAwareDispatchTask):
 
     description = "Lint Python source files with Ruff."
     python_dependencies = ["ruff"]
-    ruff_task: Property[str] = Property.default("")
 
     ruff_bin: Property[str] = Property.default("ruff")
+    ruff_task: Property[str] = Property.default("")
     config_file: Property[Path]
     additional_args: Property[Sequence[str]] = Property.default_factory(list)
 
