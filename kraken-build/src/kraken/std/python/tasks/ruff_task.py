@@ -27,7 +27,8 @@ class RuffTask(EnvironmentAwareDispatchTask):
             self.ruff_bin.get(),
             self.ruff_task.get(),
             str(self.settings.source_directory),
-        ] + self.settings.get_tests_directory_as_args()
+            *self.settings.get_tests_directory_as_args(),
+        ]
         command += [str(directory) for directory in self.settings.lint_enforced_directories]
         if self.config_file.is_filled():
             command += ["--config", str(self.config_file.get().absolute())]
