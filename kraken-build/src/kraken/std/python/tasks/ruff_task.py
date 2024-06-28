@@ -54,6 +54,11 @@ def ruff(
 ) -> RuffTasks:
     """Creates three tasks for formatting and linting your Python project with Ruff.
 
+    :param name: Prefix name for the ruff tasks.
+    :param project: Project used for the generated ruff tasks. If not specified will consider `Project.current()`.
+    :param config_file: Configuration file to consider.
+    :param additional_args: Additional arguments to pass to all ruff tasks.
+    :param additional_requirements: Additional requirements to pass to pex_build.
     :param version_spec: If specified, the Ruff tool will be installed as a PEX and does not need to be installed
         into the Python project's virtual env.
     """
