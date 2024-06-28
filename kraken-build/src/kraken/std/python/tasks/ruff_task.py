@@ -93,12 +93,11 @@ def ruff(
     format_check_task.ruff_task = "format --check"
     format_check_task.config_file = config_file
     format_check_task.additional_args = additional_args
-    
+
     format_task = project.task(f"{name}.fmt", RuffTask, group="fmt")
     format_task.ruff_bin = ruff_bin
     format_task.ruff_task = "format"
     format_task.config_file = config_file
     format_task.additional_args = additional_args
-
 
     return RuffTasks(check_task, fix_task, format_task, format_check_task)
