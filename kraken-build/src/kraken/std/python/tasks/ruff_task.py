@@ -18,14 +18,14 @@ class RuffTask(EnvironmentAwareDispatchTask):
     python_dependencies = ["ruff"]
 
     ruff_bin: Property[str] = Property.default("ruff")
-    ruff_task: Property[str] = Property.default("")
+    ruff_task: Property[Sequence[str]] = Property.default_factory(list)
     config_file: Property[Path]
     additional_args: Property[Sequence[str]] = Property.default_factory(list)
 
     def get_execute_command(self) -> list[str]:
         command = [
             self.ruff_bin.get(),
-            self.ruff_task.get(),
+            *self.ruff_task.get(),
             str(self.settings.source_directory),
             *self.settings.get_tests_directory_as_args(),
         ]
@@ -78,26 +78,26 @@ def ruff(
 
     check_task = project.task(f"{name}.check", RuffTask, group="lint")
     check_task.ruff_bin = ruff_bin
-    check_task.ruff_task = "check"
+    check_task.ruff_task = ["check"]
     check_task.config_file = config_file
     check_task.additional_args = additional_args
 
     fix_task = project.task(f"{name}.fix", RuffTask, group="fmt")
     fix_task.ruff_bin = ruff_bin
-    fix_task.ruff_task = "check --fix"
+    fix_task.ruff_task = ["check", "--fix"]
     fix_task.config_file = config_file
     fix_task.additional_args = additional_args
 
-    format_check_task = project.task(f"{name}.fmt.check", RuffTask, group="lint")
-    format_check_task.ruff_bin = ruff_bin
-    format_check_task.ruff_task = "format --check"
-    format_check_task.config_file = config_file
-    format_check_task.additional_args = additional_args
-
     format_task = project.task(f"{name}.fmt", RuffTask, group="fmt")
     format_task.ruff_bin = ruff_bin
-    format_task.ruff_task = "format"
+    format_task.ruff_task = ["format"]
     format_task.config_file = config_file
     format_task.additional_args = additional_args
+
+    format_check_task = project.task(f"{name}.fmt.check", RuffTask, group="lint")
+    format_check_task.ruff_bin = ruff_bin
+    format_check_task.ruff_task = ["format", "--check"]
+    format_check_task.config_file = config_file
+    format_check_task.additional_args = additional_args
 
     return RuffTasks(check_task, fix_task, format_task, format_check_task)
