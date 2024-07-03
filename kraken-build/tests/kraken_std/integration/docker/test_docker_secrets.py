@@ -5,7 +5,6 @@ import subprocess as sp
 import tempfile
 import textwrap
 from pathlib import Path
-import time
 
 import pytest
 
@@ -40,7 +39,7 @@ def test__secrets_can_be_accessed_at_build_time_and_are_not_present_in_the_final
     if backend == "kaniko":
         dockerfile_content += "\nRUN ls /kaniko/secrets\nRUN ls /run/secrets"
 
-    image_tag = "kraken-integration-tests/test-secrets:latest"
+    image_tag = f"kraken-integration-tests/test-secrets-{backend}:latest"
 
     with tempfile.TemporaryDirectory() as tempdir, contextlib.ExitStack() as exit_stack:
         kraken_project.directory = Path(tempdir)
@@ -61,8 +60,7 @@ def test__secrets_can_be_accessed_at_build_time_and_are_not_present_in_the_final
 
         kraken_project.context.execute([":buildDocker"])
 
-        # note: We sleep for a bit to ensure the container(s) have had time to shut down properly.
-        exit_stack.callback(lambda: [time.sleep(5), sp.check_call(["docker", "rmi", image_tag])])
+        exit_stack.callback(lambda: sp.check_call(["docker", "rmi", image_tag]))
 
         # Check that the secret files does not exist.
         command = ["sh", "-c", f"find {secret_path} 2>/dev/null || true"]
