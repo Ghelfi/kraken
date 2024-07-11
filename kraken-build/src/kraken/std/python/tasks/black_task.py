@@ -63,6 +63,11 @@ def black(
     """Creates two black tasks, one to check and another to format. The check task will be grouped under `"lint"`
     whereas the format task will be grouped under `"fmt"`.
 
+    :param name: Prefix name for the black tasks.
+    :param project: Project used for the generated black tasks. If not specified will consider `Project.current()`.
+    :param config_file: Configuration file to consider.
+    :param additional_args: Additional arguments to pass to all black tasks.
+    :param additional_files: Additional files to apply all the black tasks on.
     :param version_spec: If specified, the Black tool will be installed as a PEX and does not need to be installed
         into the Python project's virtual env.
     """
