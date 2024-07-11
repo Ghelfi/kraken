@@ -1,4 +1,10 @@
 [[entries]]
+id = "7e50c02f-8a42-4877-a64c-21fedb04dab5"
+type = "refactor"
+description = "Renaming Pyproject into TomlConfig for better capturing what it does"
+author = "alexandre.ghelfi@helsing.ai"
+
+[[entries]]
 id = "00907a4a-2abe-43a5-a134-d96aaf0bdbdb"
 type = "docs"
 description = "Fixing typo in README"
