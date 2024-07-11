@@ -13,7 +13,7 @@ from pathlib import Path
 from kraken.common.path import is_relative_to
 
 from ...cargo.manifest import CargoMetadata
-from ..pyproject import Pyproject, PyprojectHandler
+from ..pyproject import TomlConfig, TomlConfigHandler
 from ..settings import PythonSettings
 from . import ManagedEnvironment
 from .pdm import PDMManagedEnvironment, PDMPythonBuildSystem
@@ -54,7 +54,7 @@ class MaturinZigTarget:
 
 class _MaturinBuilder:
     def __init__(
-        self, entry_point: str, get_pyproject_reader: Callable[[Pyproject], PyprojectHandler], project_directory: Path
+        self, entry_point: str, get_pyproject_reader: Callable[[TomlConfig], TomlConfigHandler], project_directory: Path
     ) -> None:
         self._entry_point = entry_point
         self._get_pyproject_reader = get_pyproject_reader
@@ -132,7 +132,7 @@ class _MaturinBuilder:
 
 class MaturinPoetryPyprojectHandler(PoetryPyprojectHandler):
     def set_version(self, version: str | None) -> None:
-        PyprojectHandler.set_version(self, version)
+        TomlConfigHandler.set_version(self, version)
         PoetryPyprojectHandler.set_version(self, version)
 
     def synchronize_project_section_to_poetry_state(self) -> None:
@@ -186,13 +186,13 @@ class MaturinPoetryPythonBuildSystem(PoetryPythonBuildSystem):
 
     # PythonBuildSystem
 
-    def get_pyproject_reader(self, pyproject: Pyproject) -> MaturinPoetryPyprojectHandler:
+    def get_pyproject_reader(self, pyproject: TomlConfig) -> MaturinPoetryPyprojectHandler:
         return MaturinPoetryPyprojectHandler(pyproject)
 
     def get_managed_environment(self) -> ManagedEnvironment:
         return MaturinPoetryManagedEnvironment(self.project_directory)
 
-    def update_pyproject(self, settings: PythonSettings, pyproject: Pyproject) -> None:
+    def update_pyproject(self, settings: PythonSettings, pyproject: TomlConfig) -> None:
         super().update_pyproject(settings, pyproject)
         handler = self.get_pyproject_reader(pyproject)
         handler.synchronize_project_section_to_poetry_state()

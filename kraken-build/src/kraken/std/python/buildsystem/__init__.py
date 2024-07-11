@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING, ClassVar
 
 from kraken.core import TaskStatus
 from kraken.std.python.buildsystem.helpers import update_python_version_str_in_source_files
-from kraken.std.python.pyproject import Pyproject, PyprojectHandler
+from kraken.std.python.pyproject import TomlConfig, TomlConfigHandler
 
 if TYPE_CHECKING:
     from ..settings import PythonSettings
@@ -37,7 +37,7 @@ class PythonBuildSystem(abc.ABC):
         :raise NotImplementedError: If :meth:`supports_managed_environment` returns `False`.
         """
 
-    def update_pyproject(self, settings: PythonSettings, pyproject: Pyproject) -> None:
+    def update_pyproject(self, settings: PythonSettings, pyproject: TomlConfig) -> None:
         """A chance to permanently update the Pyproject configuration."""
 
         handler = self.get_pyproject_reader(pyproject)
@@ -49,7 +49,7 @@ class PythonBuildSystem(abc.ABC):
                 logger.debug("build system %r does not support managing package indexes", self.name)
 
     @abc.abstractmethod
-    def update_lockfile(self, settings: PythonSettings, pyproject: Pyproject) -> TaskStatus:
+    def update_lockfile(self, settings: PythonSettings, pyproject: TomlConfig) -> TaskStatus:
         """Resolve all dependencies of the project and write the exact versions into
         the correspondig lock file. In the case of Poetry it is poetry.lock."""
 
@@ -78,7 +78,7 @@ class PythonBuildSystem(abc.ABC):
         revert_files[pyproject_toml] = pyproject_toml.read_text()
 
         # Bump the in-source version number.
-        pyproject = self.get_pyproject_reader(Pyproject.read(pyproject_toml))
+        pyproject = self.get_pyproject_reader(TomlConfig.read(pyproject_toml))
         try:
             pyproject.set_path_dependencies_to_version(version)
         except NotImplementedError:
@@ -118,7 +118,7 @@ class PythonBuildSystem(abc.ABC):
         """
 
     @abc.abstractmethod
-    def get_pyproject_reader(self, pyproject: Pyproject) -> PyprojectHandler:
+    def get_pyproject_reader(self, pyproject: TomlConfig) -> TomlConfigHandler:
         """Return an object able to read the pyproject file depending on the build system."""
 
     @abc.abstractmethod

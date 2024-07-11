@@ -52,9 +52,9 @@ class PackageIndex:
 
 
 @dataclass
-class Pyproject(MutableMapping[str, Any]):
+class TomlConfig(MutableMapping[str, Any]):
     """
-    Represents a raw `pyproject.toml` file in deserialized form.
+    Represents a raw `.toml` file in deserialized form.
     """
 
     path: Path | None
@@ -87,11 +87,11 @@ class Pyproject(MutableMapping[str, Any]):
         return self.data[key]
 
     @classmethod
-    def read_string(cls, text: str) -> Pyproject:
+    def read_string(cls, text: str) -> TomlConfig:
         return cls(None, tomlkit.parse(text))
 
     @classmethod
-    def read(cls, path: Path) -> Pyproject:
+    def read(cls, path: Path) -> TomlConfig:
         with path.open("rb") as fp:
             return cls(path, tomlkit.load(fp))
 
@@ -106,14 +106,14 @@ class Pyproject(MutableMapping[str, Any]):
         return tomlkit.dumps(self.data)
 
 
-class PyprojectHandler(ABC):
+class TomlConfigHandler(ABC):
     """
-    A wrapper for a raw Pyproject to implement common read and mutation operations.
+    A wrapper for a raw TomlCOnfig to implement common read and mutation operations.
     """
 
-    raw: Pyproject
+    raw: TomlConfig
 
-    def __init__(self, raw: Pyproject) -> None:
+    def __init__(self, raw: TomlConfig) -> None:
         self.raw = raw
 
     def get_name(self) -> str | None:
@@ -193,3 +193,8 @@ class PyprojectHandler(ABC):
     @abstractmethod
     def get_packages(self) -> list[Package]:
         pass
+
+
+# Define Pyproject and PyprojectHandler types for back compatibility
+Pyproject = TomlConfig
+PyprojectHandler = TomlConfigHandler

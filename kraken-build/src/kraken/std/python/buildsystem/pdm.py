@@ -13,7 +13,7 @@ from typing import Any
 from kraken.common import NotSet
 from kraken.common.path import is_relative_to
 from kraken.core import TaskStatus
-from kraken.std.python.pyproject import PackageIndex, Pyproject, PyprojectHandler
+from kraken.std.python.pyproject import PackageIndex, TomlConfig, TomlConfigHandler
 from kraken.std.python.settings import PythonSettings
 
 from . import ManagedEnvironment, PythonBuildSystem
@@ -21,12 +21,12 @@ from . import ManagedEnvironment, PythonBuildSystem
 logger = logging.getLogger(__name__)
 
 
-class PdmPyprojectHandler(PyprojectHandler):
+class PdmPyprojectHandler(TomlConfigHandler):
     """
     Implements the PyprojectHandler interface for PDM projects.
     """
 
-    def __init__(self, pyproj: Pyproject) -> None:
+    def __init__(self, pyproj: TomlConfig) -> None:
         super().__init__(pyproj)
 
     # PyprojectHandler
@@ -105,7 +105,7 @@ class PdmPyprojectHandler(PyprojectHandler):
                 source["verify_ssl"] = False
             sources_conf.append(source)
 
-    def get_packages(self) -> list[PyprojectHandler.Package]:
+    def get_packages(self) -> list[TomlConfigHandler.Package]:
         # TODO: Detect packages in the PDM project. Until we do, the __version__ in source files of PDM
         #       projects are not bumped on publish.
         return []
@@ -117,7 +117,7 @@ class PDMPythonBuildSystem(PythonBuildSystem):
     def __init__(self, project_directory: Path) -> None:
         self.project_directory = project_directory
 
-    def get_pyproject_reader(self, pyproject: Pyproject) -> PdmPyprojectHandler:
+    def get_pyproject_reader(self, pyproject: TomlConfig) -> PdmPyprojectHandler:
         return PdmPyprojectHandler(pyproject)
 
     def supports_managed_environments(self) -> bool:
@@ -126,7 +126,7 @@ class PDMPythonBuildSystem(PythonBuildSystem):
     def get_managed_environment(self) -> ManagedEnvironment:
         return PDMManagedEnvironment(self.project_directory)
 
-    def update_lockfile(self, settings: PythonSettings, pyproject: Pyproject) -> TaskStatus:
+    def update_lockfile(self, settings: PythonSettings, pyproject: TomlConfig) -> TaskStatus:
         command = ["pdm", "update"]
         sp.check_call(command, cwd=self.project_directory)
         return TaskStatus.succeeded()
