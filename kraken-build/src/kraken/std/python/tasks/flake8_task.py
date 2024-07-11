@@ -46,8 +46,12 @@ def flake8(
 ) -> Flake8Task:
     """Creates a task for linting your Python project with Flake8.
 
+    :param name: Prefix name for the flake8 task.
+    :param project: Project used for the generated flake8 tasks. If not specified will consider `Project.current()`.
+    :param config_file: Configuration file to consider.
     :param version_spec: If specified, the Flake8 tool will be installed as a PEX and does not need to be installed
         into the Python project's virtual env.
+    :param additional_requirements: Additional requirements to pass to pex_build.
     """
 
     project = project or Project.current()
