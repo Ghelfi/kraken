@@ -16,7 +16,7 @@ from urllib.parse import quote
 
 from kraken.common import NotSet
 from kraken.core import TaskStatus
-from kraken.std.python.pyproject import PackageIndex, TomlConfig, PyprojectHandler
+from kraken.std.python.pyproject import PackageIndex, PyprojectHandler, TomlConfig
 
 from . import ManagedEnvironment, PythonBuildSystem
 from .pdm import PdmPyprojectHandler, PDMPythonBuildSystem

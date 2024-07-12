@@ -13,7 +13,7 @@ from pathlib import Path
 from kraken.common.path import is_relative_to
 
 from ...cargo.manifest import CargoMetadata
-from ..pyproject import TomlConfig, PyprojectHandler
+from ..pyproject import PyprojectHandler, TomlConfig
 from ..settings import PythonSettings
 from . import ManagedEnvironment
 from .pdm import PDMManagedEnvironment, PDMPythonBuildSystem
