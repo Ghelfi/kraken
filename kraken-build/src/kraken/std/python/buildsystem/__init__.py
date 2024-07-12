@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING, ClassVar
 
 from kraken.core import TaskStatus
 from kraken.std.python.buildsystem.helpers import update_python_version_str_in_source_files
-from kraken.std.python.pyproject import TomlConfig, TomlConfigHandler
+from kraken.std.python.pyproject import TomlConfig, PyprojectHandler
 
 if TYPE_CHECKING:
     from ..settings import PythonSettings
@@ -118,7 +118,7 @@ class PythonBuildSystem(abc.ABC):
         """
 
     @abc.abstractmethod
-    def get_pyproject_reader(self, pyproject: TomlConfig) -> TomlConfigHandler:
+    def get_pyproject_reader(self, pyproject: TomlConfig) -> PyprojectHandler:
         """Return an object able to read the pyproject file depending on the build system."""
 
     @abc.abstractmethod

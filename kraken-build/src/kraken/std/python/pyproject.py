@@ -106,9 +106,9 @@ class TomlConfig(MutableMapping[str, Any]):
         return tomlkit.dumps(self.data)
 
 
-class TomlConfigHandler(ABC):
+class PyprojectHandler(ABC):
     """
-    A wrapper for a raw TomlCOnfig to implement common read and mutation operations.
+    A wrapper for a raw TomlConfig to implement common read and mutation operations.
     """
 
     raw: TomlConfig
@@ -195,6 +195,5 @@ class TomlConfigHandler(ABC):
         pass
 
 
-# Define Pyproject and PyprojectHandler types for back compatibility
+# Define Pyproject type for back compatibility
 Pyproject = TomlConfig
-PyprojectHandler = TomlConfigHandler

@@ -15,7 +15,7 @@ from kraken.common import NotSet
 from kraken.common.path import is_relative_to
 from kraken.common.pyenv import get_current_venv
 from kraken.core import TaskStatus
-from kraken.std.python.pyproject import PackageIndex, TomlConfig, TomlConfigHandler
+from kraken.std.python.pyproject import PackageIndex, TomlConfig, PyprojectHandler
 from kraken.std.python.settings import PythonSettings
 
 from . import ManagedEnvironment, PythonBuildSystem
@@ -23,7 +23,7 @@ from . import ManagedEnvironment, PythonBuildSystem
 logger = logging.getLogger(__name__)
 
 
-class PoetryPyprojectHandler(TomlConfigHandler):
+class PoetryPyprojectHandler(PyprojectHandler):
     """
     Pyproject configuration handler for Poetry projects.
     """
@@ -35,7 +35,7 @@ class PoetryPyprojectHandler(TomlConfigHandler):
     def _poetry_section(self) -> dict[str, Any]:
         return self.raw.setdefault("tool", {}).setdefault("poetry", {})  # type: ignore[no-any-return]
 
-    def get_packages(self) -> list[TomlConfigHandler.Package]:
+    def get_packages(self) -> list[PyprojectHandler.Package]:
         """
         Returns the packages included in the distribution of this project listed in `[tool.poetry.packages]`.
 

@@ -13,7 +13,7 @@ from pathlib import Path
 from kraken.common.path import is_relative_to
 
 from ...cargo.manifest import CargoMetadata
-from ..pyproject import TomlConfig, TomlConfigHandler
+from ..pyproject import TomlConfig, PyprojectHandler
 from ..settings import PythonSettings
 from . import ManagedEnvironment
 from .pdm import PDMManagedEnvironment, PDMPythonBuildSystem
@@ -54,7 +54,7 @@ class MaturinZigTarget:
 
 class _MaturinBuilder:
     def __init__(
-        self, entry_point: str, get_pyproject_reader: Callable[[TomlConfig], TomlConfigHandler], project_directory: Path
+        self, entry_point: str, get_pyproject_reader: Callable[[TomlConfig], PyprojectHandler], project_directory: Path
     ) -> None:
         self._entry_point = entry_point
         self._get_pyproject_reader = get_pyproject_reader
@@ -132,7 +132,7 @@ class _MaturinBuilder:
 
 class MaturinPoetryPyprojectHandler(PoetryPyprojectHandler):
     def set_version(self, version: str | None) -> None:
-        TomlConfigHandler.set_version(self, version)
+        PyprojectHandler.set_version(self, version)
         PoetryPyprojectHandler.set_version(self, version)
 
     def synchronize_project_section_to_poetry_state(self) -> None:

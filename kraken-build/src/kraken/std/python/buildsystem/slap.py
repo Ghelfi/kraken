@@ -16,7 +16,7 @@ from urllib.parse import quote
 
 from kraken.common import NotSet
 from kraken.core import TaskStatus
-from kraken.std.python.pyproject import PackageIndex, TomlConfig, TomlConfigHandler
+from kraken.std.python.pyproject import PackageIndex, TomlConfig, PyprojectHandler
 
 from . import ManagedEnvironment, PythonBuildSystem
 from .pdm import PdmPyprojectHandler, PDMPythonBuildSystem
@@ -34,7 +34,7 @@ class SlapPythonBuildSystem(PythonBuildSystem):
     def __init__(self, project_directory: Path) -> None:
         self.project_directory = project_directory
 
-    def get_pyproject_reader(self, pyproject: TomlConfig) -> TomlConfigHandler:
+    def get_pyproject_reader(self, pyproject: TomlConfig) -> PyprojectHandler:
         if "poetry" in pyproject.get("tool", {}):
             return PoetryPyprojectHandler(pyproject)
         if "pdm" in pyproject.get("build-backend", {}):

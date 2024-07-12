@@ -13,7 +13,7 @@ from typing import Any
 from kraken.common import NotSet
 from kraken.common.path import is_relative_to
 from kraken.core import TaskStatus
-from kraken.std.python.pyproject import PackageIndex, TomlConfig, TomlConfigHandler
+from kraken.std.python.pyproject import PackageIndex, TomlConfig, PyprojectHandler
 from kraken.std.python.settings import PythonSettings
 
 from . import ManagedEnvironment, PythonBuildSystem
@@ -21,7 +21,7 @@ from . import ManagedEnvironment, PythonBuildSystem
 logger = logging.getLogger(__name__)
 
 
-class PdmPyprojectHandler(TomlConfigHandler):
+class PdmPyprojectHandler(PyprojectHandler):
     """
     Implements the PyprojectHandler interface for PDM projects.
     """
@@ -105,7 +105,7 @@ class PdmPyprojectHandler(TomlConfigHandler):
                 source["verify_ssl"] = False
             sources_conf.append(source)
 
-    def get_packages(self) -> list[TomlConfigHandler.Package]:
+    def get_packages(self) -> list[PyprojectHandler.Package]:
         # TODO: Detect packages in the PDM project. Until we do, the __version__ in source files of PDM
         #       projects are not bumped on publish.
         return []
