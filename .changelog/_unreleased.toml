@@ -1,7 +1,7 @@
 [[entries]]
 id = "7e50c02f-8a42-4877-a64c-21fedb04dab5"
 type = "refactor"
-description = "Renaming Pyproject into TomlConfig for better capturing what it does"
+description = "Renamed `Pyproject` into `TomlFile` for better capturing what it does and moved it to `kraken.common.toml`."
 author = "alexandre.ghelfi@helsing.ai"
 
 [[entries]]

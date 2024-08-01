@@ -14,8 +14,9 @@ from typing import Any
 from kraken.common import NotSet
 from kraken.common.path import is_relative_to
 from kraken.common.pyenv import get_current_venv
+from kraken.common.toml import TomlFile
 from kraken.core import TaskStatus
-from kraken.std.python.pyproject import PackageIndex, PyprojectHandler, TomlConfig
+from kraken.std.python.pyproject import PackageIndex, PyprojectHandler
 from kraken.std.python.settings import PythonSettings
 
 from . import ManagedEnvironment, PythonBuildSystem
@@ -28,7 +29,7 @@ class PoetryPyprojectHandler(PyprojectHandler):
     Pyproject configuration handler for Poetry projects.
     """
 
-    def __init__(self, pyproj: TomlConfig) -> None:
+    def __init__(self, pyproj: TomlFile) -> None:
         super().__init__(pyproj)
 
     @property
@@ -135,7 +136,7 @@ class PoetryPythonBuildSystem(PythonBuildSystem):
 
     # PythonBuildSystem
 
-    def get_pyproject_reader(self, pyproject: TomlConfig) -> PoetryPyprojectHandler:
+    def get_pyproject_reader(self, pyproject: TomlFile) -> PoetryPyprojectHandler:
         return PoetryPyprojectHandler(pyproject)
 
     def supports_managed_environments(self) -> bool:
@@ -144,7 +145,7 @@ class PoetryPythonBuildSystem(PythonBuildSystem):
     def get_managed_environment(self) -> ManagedEnvironment:
         return PoetryManagedEnvironment(self.project_directory)
 
-    def update_lockfile(self, settings: PythonSettings, pyproject: TomlConfig) -> TaskStatus:
+    def update_lockfile(self, settings: PythonSettings, pyproject: TomlFile) -> TaskStatus:
         command = ["poetry", "update"]
         sp.check_call(command, cwd=self.project_directory)
         return TaskStatus.succeeded()

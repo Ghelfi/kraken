@@ -12,8 +12,9 @@ from typing import Any
 
 from kraken.common import NotSet
 from kraken.common.path import is_relative_to
+from kraken.common.toml import TomlFile
 from kraken.core import TaskStatus
-from kraken.std.python.pyproject import PackageIndex, PyprojectHandler, TomlConfig
+from kraken.std.python.pyproject import PackageIndex, PyprojectHandler
 from kraken.std.python.settings import PythonSettings
 
 from . import ManagedEnvironment, PythonBuildSystem
@@ -26,7 +27,7 @@ class PdmPyprojectHandler(PyprojectHandler):
     Implements the PyprojectHandler interface for PDM projects.
     """
 
-    def __init__(self, pyproj: TomlConfig) -> None:
+    def __init__(self, pyproj: TomlFile) -> None:
         super().__init__(pyproj)
 
     # PyprojectHandler
@@ -117,7 +118,7 @@ class PDMPythonBuildSystem(PythonBuildSystem):
     def __init__(self, project_directory: Path) -> None:
         self.project_directory = project_directory
 
-    def get_pyproject_reader(self, pyproject: TomlConfig) -> PdmPyprojectHandler:
+    def get_pyproject_reader(self, pyproject: TomlFile) -> PdmPyprojectHandler:
         return PdmPyprojectHandler(pyproject)
 
     def supports_managed_environments(self) -> bool:
@@ -126,7 +127,7 @@ class PDMPythonBuildSystem(PythonBuildSystem):
     def get_managed_environment(self) -> ManagedEnvironment:
         return PDMManagedEnvironment(self.project_directory)
 
-    def update_lockfile(self, settings: PythonSettings, pyproject: TomlConfig) -> TaskStatus:
+    def update_lockfile(self, settings: PythonSettings, pyproject: TomlFile) -> TaskStatus:
         command = ["pdm", "update"]
         sp.check_call(command, cwd=self.project_directory)
         return TaskStatus.succeeded()

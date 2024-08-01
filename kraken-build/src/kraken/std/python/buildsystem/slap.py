@@ -15,8 +15,9 @@ from typing import TYPE_CHECKING
 from urllib.parse import quote
 
 from kraken.common import NotSet
+from kraken.common.toml import TomlFile
 from kraken.core import TaskStatus
-from kraken.std.python.pyproject import PackageIndex, PyprojectHandler, TomlConfig
+from kraken.std.python.pyproject import PackageIndex, PyprojectHandler
 
 from . import ManagedEnvironment, PythonBuildSystem
 from .pdm import PdmPyprojectHandler, PDMPythonBuildSystem
@@ -34,7 +35,7 @@ class SlapPythonBuildSystem(PythonBuildSystem):
     def __init__(self, project_directory: Path) -> None:
         self.project_directory = project_directory
 
-    def get_pyproject_reader(self, pyproject: TomlConfig) -> PyprojectHandler:
+    def get_pyproject_reader(self, pyproject: TomlFile) -> PyprojectHandler:
         if "poetry" in pyproject.get("tool", {}):
             return PoetryPyprojectHandler(pyproject)
         if "pdm" in pyproject.get("build-backend", {}):
@@ -47,13 +48,13 @@ class SlapPythonBuildSystem(PythonBuildSystem):
     def get_managed_environment(self) -> ManagedEnvironment:
         return SlapManagedEnvironment(self.project_directory)
 
-    def update_pyproject(self, settings: PythonSettings, pyproject: TomlConfig) -> None:
+    def update_pyproject(self, settings: PythonSettings, pyproject: TomlFile) -> None:
         if "poetry" in pyproject.get("tool", {}):
             PoetryPythonBuildSystem(self.project_directory).update_pyproject(settings, pyproject)
         if "pdm" in pyproject.get("tool", {}):
             PDMPythonBuildSystem(self.project_directory).update_pyproject(settings, pyproject)
 
-    def update_lockfile(self, settings: PythonSettings, pyproject: TomlConfig) -> TaskStatus:
+    def update_lockfile(self, settings: PythonSettings, pyproject: TomlFile) -> TaskStatus:
         return TaskStatus.skipped("not supported")
 
     def requires_login(self) -> bool:

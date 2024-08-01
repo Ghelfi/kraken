@@ -2,13 +2,12 @@ from __future__ import annotations
 
 import logging
 from abc import ABC, abstractmethod
-from collections.abc import Iterator, MutableMapping, Sequence
+from collections.abc import Sequence
 from dataclasses import dataclass
 from enum import Enum
-from pathlib import Path
 from typing import Any, ClassVar, TypeAlias
 
-import tomlkit
+from kraken.common.toml import TomlFile
 
 logger = logging.getLogger(__name__)
 
@@ -51,69 +50,14 @@ class PackageIndex:
     verify_ssl: bool
 
 
-@dataclass
-class TomlConfig(MutableMapping[str, Any]):
-    """
-    Represents a raw `.toml` file in deserialized form.
-    """
-
-    path: Path | None
-    data: MutableMapping[str, Any]
-
-    def __init__(self, path: Path | None, data: MutableMapping[str, Any]) -> None:
-        self.path = path
-        self.data = data
-
-    def __iter__(self) -> Iterator[str]:
-        return iter(self.data)
-
-    def __len__(self) -> int:
-        return len(self.data)
-
-    def __getitem__(self, key: str) -> Any:
-        return self.data[key]
-
-    def __setitem__(self, key: str, value: Any) -> None:
-        self.data[key] = value
-
-    def __delitem__(self, key: str) -> None:
-        del self.data[key]
-
-    def setdefault(self, key: str, default: Any | None = None) -> Any:
-        # NOTE(@niklas): We need to override this as the default implementation from MutableMapping is not
-        #       compatible with the expected behaviour from the wrapped Tomlkit container. See
-        #       https://github.com/sdispater/tomlkit/issues/49#issuecomment-1999713939
-        self.data.setdefault(key, default)
-        return self.data[key]
-
-    @classmethod
-    def read_string(cls, text: str) -> TomlConfig:
-        return cls(None, tomlkit.parse(text))
-
-    @classmethod
-    def read(cls, path: Path) -> TomlConfig:
-        with path.open("rb") as fp:
-            return cls(path, tomlkit.load(fp))
-
-    def save(self, path: Path | None = None) -> None:
-        path = path or self.path
-        if not path:
-            raise RuntimeError("No path to save to")
-        with path.open("w") as fp:
-            fp.write(self.to_toml_string())
-
-    def to_toml_string(self) -> str:
-        return tomlkit.dumps(self.data)
-
-
 class PyprojectHandler(ABC):
     """
     A wrapper for a raw TomlConfig to implement common read and mutation operations.
     """
 
-    raw: TomlConfig
+    raw: TomlFile
 
-    def __init__(self, raw: TomlConfig) -> None:
+    def __init__(self, raw: TomlFile) -> None:
         self.raw = raw
 
     def get_name(self) -> str | None:
@@ -196,4 +140,4 @@ class PyprojectHandler(ABC):
 
 
 # Define Pyproject type for back compatibility
-Pyproject = TomlConfig
+Pyproject = TomlFile
