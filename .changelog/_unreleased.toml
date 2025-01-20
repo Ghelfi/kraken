@@ -15,3 +15,9 @@ id = "cef04ded-99dc-42c0-8a69-79915a368d74"
 type = "improvement"
 description = "Use UV as the default installer for Kraken build-time virtual environments"
 author = "@NiklasRosenstein"
+
+[[entries]]
+id = "cbae7d73-09aa-442f-b099-27a4ae23b3c3"
+type = "improvement"
+description = "Allows to use uv with maturin"
+author = "thomas.pellissier-tanon@helsing.ai"
