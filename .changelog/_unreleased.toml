@@ -9,3 +9,9 @@ id = "59f38d72-bb19-4398-b358-c9c1ea3dfa59"
 type = "fix"
 description = "Fixes test compatibility with Poetry 2.0"
 author = "thomas.pellissier-tanon@helsing.ai"
+
+[[entries]]
+id = "cef04ded-99dc-42c0-8a69-79915a368d74"
+type = "improvement"
+description = "Use UV as the default installer for Kraken build-time virtual environments"
+author = "@NiklasRosenstein"
