@@ -51,3 +51,9 @@ id = "4d8e2872-d32f-4747-b2d6-aa5c1cb4ec75"
 type = "fix"
 description = "Rename deprecated tool.poetry.dev-dependencies section"
 author = "scott@stevenson.io"
+
+[[entries]]
+id = "e3edc5a7-39ec-4e05-89c8-d06bf8cb0ee8"
+type = "feature"
+description = "Enabling `UvPyprojectHandler` to properly bump versions for path dependencies"
+author = "alexandre.ghelfi@helsing.ai"
