@@ -227,6 +227,7 @@ class UvPyprojectHandler(PyprojectHandler):
         optional_dependencies = self._get_optional_dependencies()
         sources_to_rm: list[str] = []
         for source, params in sources.items():
+            # TODO(Ghelfi): Checks if entry with `path` is with current project
             if "workspace" in params or "path" in params:
                 sources_to_rm.append(source)
                 if (index := dependencies.index(source)) is not None:
