@@ -11,7 +11,7 @@ import os
 import shutil
 import subprocess as sp
 import tempfile
-from collections.abc import Sequence
+from collections.abc import Iterator, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Annotated, Any, Iterable, TypeVar
@@ -195,6 +195,55 @@ class UvPyprojectHandler(PyprojectHandler):
     def get_packages(self) -> list[PyprojectHandler.Package]:
         package_name = self.raw["project"]["name"]
         return [self.Package(include=package_name.replace("-", "_").replace(".", "_"))]
+    
+    def _get_sources(self) -> dict[str, dict]:
+        return self.raw.get("tool", {}).get("uv", {}).get("sources", {})
+    
+    def _get_dependencies(self) -> list[str]:
+        """Fetches dependencies following [PEP631](https://peps.python.org/pep-0631/) format."""
+        return self.raw.get("project", {}).get("dependencies", [])
+    
+    def _get_dependency_groups(self) -> dict[str, list[str]]:
+        return self.raw.get("project", {}).get("dependency-groups", {})
+    
+    def _get_optional_dependencies(self) -> dict[str, list[str]]:
+        return self.raw.get("project", {}).get("optional-dependencies", {})
+    
+    def set_path_dependencies_to_version(self, version: str) -> None:
+        """
+        Walks through the `[project.dependencies]`, `[project.dependency-groups]`
+        and `[project.optional-dependencies]` groups to replace all path and workspace sources
+        with proper index dependencies pointing using the specified `version` string.
+
+        Based on [PEP631](https://peps.python.org/pep-0631/) for dependencies and optional-dependencies,
+        and [PEP735](https://peps.python.org/pep-0735/) for dependency-groups.
+        """
+
+        # TODO(Ghelfi): Add Test
+
+        sources: dict[str, dict] = self._get_sources()
+        dependencies = self._get_dependencies()
+        dependency_groups = self._get_dependency_groups()
+        optional_dependencies = self._get_optional_dependencies()
+        sources_to_rm: list[str] = []
+        for source, params in sources.items():
+            if "workspace" in params or "path" in params:
+                sources_to_rm.append(source)
+                if (index := dependencies.index(source)) is not None:
+                    dependencies[index] = f"{source}=={version}"
+                for key, deps in dependency_groups.items():
+                    if (index := deps.index(source)) is not None:
+                        dependency_groups[key][index] = f"{source}=={version}"
+                for key, deps in optional_dependencies.items():
+                    if (index := deps.index(source)) is not None:
+                        optional_dependencies[key][index] = f"{source}=={version}"
+
+        if len(sources_to_rm) == len(sources):
+            # All the sources has been properly pinned to version, hence the whole group is removed
+            self.raw.get("tool", {}).get("uv", {}).pop("sources")
+        else:
+            for elem in sources_to_rm:
+                sources.pop(elem)   
 
 
 class UvPythonBuildSystem(PythonBuildSystem):
