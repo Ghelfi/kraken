@@ -11,7 +11,7 @@ import os
 import shutil
 import subprocess as sp
 import tempfile
-from collections.abc import Iterator, Sequence
+from collections.abc import Sequence
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Annotated, Any, Iterable, TypeVar
@@ -195,20 +195,20 @@ class UvPyprojectHandler(PyprojectHandler):
     def get_packages(self) -> list[PyprojectHandler.Package]:
         package_name = self.raw["project"]["name"]
         return [self.Package(include=package_name.replace("-", "_").replace(".", "_"))]
-    
+
     def _get_sources(self) -> dict[str, dict]:
         return self.raw.get("tool", {}).get("uv", {}).get("sources", {})
-    
+
     def _get_dependencies(self) -> list[str]:
         """Fetches dependencies following [PEP631](https://peps.python.org/pep-0631/) format."""
         return self.raw.get("project", {}).get("dependencies", [])
-    
+
     def _get_dependency_groups(self) -> dict[str, list[str]]:
         return self.raw.get("project", {}).get("dependency-groups", {})
-    
+
     def _get_optional_dependencies(self) -> dict[str, list[str]]:
         return self.raw.get("project", {}).get("optional-dependencies", {})
-    
+
     def set_path_dependencies_to_version(self, version: str) -> None:
         """
         Walks through the `[project.dependencies]`, `[project.dependency-groups]`
@@ -244,7 +244,7 @@ class UvPyprojectHandler(PyprojectHandler):
             self.raw.get("tool", {}).get("uv", {}).pop("sources")
         else:
             for elem in sources_to_rm:
-                sources.pop(elem)   
+                sources.pop(elem)
 
 
 class UvPythonBuildSystem(PythonBuildSystem):
