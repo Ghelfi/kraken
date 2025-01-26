@@ -213,7 +213,7 @@ class UvPyprojectHandler(PyprojectHandler):
         """
         Walks through the `[project.dependencies]`, `[project.dependency-groups]`
         and `[project.optional-dependencies]` groups to replace all path and workspace sources
-        with proper index dependencies pointing using the specified `version` string.
+        with proper index dependencies using the specified `version` string.
 
         Based on [PEP631](https://peps.python.org/pep-0631/) for dependencies and optional-dependencies,
         and [PEP735](https://peps.python.org/pep-0735/) for dependency-groups.
