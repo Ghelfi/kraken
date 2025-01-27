@@ -190,7 +190,7 @@ def test__python_project__upgrade_relative_import_version(
     tempdir = kraken_project.directory
 
     build_as_version = "0.2.0"
-    project_name = "uv-project-consumer"
+    project_name = "uv-project-relative-import"
     original_dir = example_dir(project_name)
     project_dist = kraken_project.build_directory / "python-dist"
 
