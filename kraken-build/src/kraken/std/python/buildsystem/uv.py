@@ -219,8 +219,6 @@ class UvPyprojectHandler(PyprojectHandler):
         and [PEP735](https://peps.python.org/pep-0735/) for dependency-groups.
         """
 
-        # TODO(Ghelfi): Add Test
-
         sources = self._get_sources()
         dependencies = self._get_dependencies()
         dependency_groups = self._get_dependency_groups()
