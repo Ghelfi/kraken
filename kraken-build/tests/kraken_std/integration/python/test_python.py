@@ -182,6 +182,41 @@ def test__python_project_upgrade_python_version_string(
         assert build_as_version == tomli.loads(conf_file.read().decode("UTF-8"))["tool"]["poetry"]["version"]
 
 
+@unittest.mock.patch.dict(os.environ, {})
+def test__python_project__upgrade_relative_import_version(
+    kraken_ctx: Context,
+    kraken_project: Project,
+) -> None:
+    tempdir = kraken_project.directory
+
+    build_as_version = "0.2.0"
+    project_name = "uv-project-consumer"
+    original_dir = example_dir(project_name)
+    project_dist = kraken_project.build_directory / "python-dist"
+
+    # Copy the projects to the temporary directory.
+    shutil.copytree(original_dir, tempdir, dirs_exist_ok=True)
+    logger.info("Loading and executing Kraken project (%s)", tempdir)
+
+    pyproject = TomlFile.read(original_dir / "pyproject.toml")
+    local_build_system = python.buildsystem.detect_build_system(tempdir)
+    assert local_build_system is not None
+    assert local_build_system.get_pyproject_reader(pyproject) is not None
+    assert local_build_system.get_pyproject_reader(pyproject).get_name() == project_name
+    python.settings.python_settings(project=kraken_project, build_system=local_build_system)
+    python.build(as_version=build_as_version, project=kraken_project)
+    kraken_ctx.execute([":build"])
+
+    # Check if generated files are named following proper version.
+    assert Path(project_dist / f"{project_name}-{build_as_version}.tar.gz").is_file()
+    assert Path(project_dist / f"{project_name}-{build_as_version}-py3-none-any.whl").is_file()
+    with tarfile.open(project_dist / f"{project_name}-{build_as_version}.tar.gz", "r:gz") as tar:
+        # Check if generated files store proper version.
+        metadata_file = tar.extractfile(f"{project_name}-{build_as_version}/PKG-INFO")
+        assert metadata_file is not None, ".tar.gz file does not contain an 'PKG-INFO'"
+        assert f"Requires-Dist: uv-project=={build_as_version}" in metadata_file.read().decode("UTF-8")
+
+
 M = TypeVar("M", PdmPyprojectHandler, PoetryPyprojectHandler)
 
 
