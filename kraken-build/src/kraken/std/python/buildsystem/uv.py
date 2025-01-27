@@ -239,12 +239,8 @@ class UvPyprojectHandler(PyprojectHandler):
                     if (index := deps.index(source)) is not None:
                         optional_dependencies[key][index] = f"{source}=={version}"
 
-        if len(sources_to_rm) == len(sources) and len(sources) > 1:
-            # All the sources has been properly pinned to version, hence the whole group is removed
-            self.raw.get("tool", {}).get("uv", {}).pop("sources")
-        else:
-            for elem in sources_to_rm:
-                sources.pop(elem)
+        for elem in sources_to_rm:
+            sources.pop(elem)
 
 
 class UvPythonBuildSystem(PythonBuildSystem):
