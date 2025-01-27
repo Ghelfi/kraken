@@ -5,7 +5,7 @@ description = "Add your description here"
 requires-python = ">=3.10"
 dependencies = [
     "tqdm>=4.66.5",
-    "uv-project==0.1.0",
+    "uv-project",
 ]
 
 [tool.uv.sources]
