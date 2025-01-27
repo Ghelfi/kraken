@@ -208,11 +208,12 @@ def test__python_project__upgrade_relative_import_version(
     kraken_ctx.execute([":build"])
 
     # Check if generated files are named following proper version.
-    assert Path(project_dist / f"{project_name}-{build_as_version}.tar.gz").is_file()
-    assert Path(project_dist / f"{project_name}-{build_as_version}-py3-none-any.whl").is_file()
-    with tarfile.open(project_dist / f"{project_name}-{build_as_version}.tar.gz", "r:gz") as tar:
+    formatted_project_name = project_name.replace("-", "_")
+    assert Path(project_dist / f"{formatted_project_name}-{build_as_version}.tar.gz").is_file()
+    assert Path(project_dist / f"{formatted_project_name}-{build_as_version}-py3-none-any.whl").is_file()
+    with tarfile.open(project_dist / f"{formatted_project_name}-{build_as_version}.tar.gz", "r:gz") as tar:
         # Check if generated files store proper version.
-        metadata_file = tar.extractfile(f"{project_name}-{build_as_version}/PKG-INFO")
+        metadata_file = tar.extractfile(f"{formatted_project_name}-{build_as_version}/PKG-INFO")
         assert metadata_file is not None, ".tar.gz file does not contain an 'PKG-INFO'"
         assert f"Requires-Dist: uv-project=={build_as_version}" in metadata_file.read().decode("UTF-8")
 
