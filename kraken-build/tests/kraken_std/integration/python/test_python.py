@@ -196,14 +196,6 @@ def test__python_project__upgrade_relative_import_version(
 
     # Copy the projects to the temporary directory.
     shutil.copytree(original_dir, tempdir, dirs_exist_ok=True)
-    logger.info("Loading and executing Kraken project (%s)", tempdir)
-
-    pyproject = TomlFile.read(original_dir / "pyproject.toml")
-    local_build_system = python.buildsystem.detect_build_system(tempdir)
-    assert local_build_system is not None
-    assert local_build_system.get_pyproject_reader(pyproject) is not None
-    assert local_build_system.get_pyproject_reader(pyproject).get_name() == project_name
-    python.settings.python_settings(project=kraken_project, build_system=local_build_system)
     python.build(as_version=build_as_version, project=kraken_project)
     kraken_ctx.execute([":build"])
 
