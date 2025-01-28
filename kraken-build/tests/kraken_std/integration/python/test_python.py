@@ -182,6 +182,34 @@ def test__python_project_upgrade_python_version_string(
         assert build_as_version == tomli.loads(conf_file.read().decode("UTF-8"))["tool"]["poetry"]["version"]
 
 
+@unittest.mock.patch.dict(os.environ, {})
+def test__python_project__upgrade_relative_import_version(
+    kraken_ctx: Context,
+    kraken_project: Project,
+) -> None:
+    tempdir = kraken_project.directory
+
+    build_as_version = "0.1.1"
+    project_name = "uv-project-relative-import"
+    original_dir = example_dir(project_name)
+    project_dist = kraken_project.build_directory / "python-dist"
+
+    # Copy the projects to the temporary directory.
+    shutil.copytree(original_dir, tempdir, dirs_exist_ok=True)
+    python.build(as_version=build_as_version, project=kraken_project)
+    kraken_ctx.execute([":build"])
+
+    # Check if generated files are named following proper version.
+    formatted_project_name = project_name.replace("-", "_")
+    assert Path(project_dist / f"{formatted_project_name}-{build_as_version}.tar.gz").is_file()
+    assert Path(project_dist / f"{formatted_project_name}-{build_as_version}-py3-none-any.whl").is_file()
+    with tarfile.open(project_dist / f"{formatted_project_name}-{build_as_version}.tar.gz", "r:gz") as tar:
+        # Check if generated files store proper version.
+        metadata_file = tar.extractfile(f"{formatted_project_name}-{build_as_version}/PKG-INFO")
+        assert metadata_file is not None, ".tar.gz file does not contain an 'PKG-INFO'"
+        assert f"Requires-Dist: uv-project=={build_as_version}" in metadata_file.read().decode("UTF-8")
+
+
 M = TypeVar("M", PdmPyprojectHandler, PoetryPyprojectHandler)
 
 

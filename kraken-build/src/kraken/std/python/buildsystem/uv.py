@@ -196,6 +196,50 @@ class UvPyprojectHandler(PyprojectHandler):
         package_name = self.raw["project"]["name"]
         return [self.Package(include=package_name.replace("-", "_").replace(".", "_"))]
 
+    def _get_sources(self) -> dict[str, dict[str, Any]]:
+        return self.raw.get("tool", {}).get("uv", {}).get("sources", {})  # type: ignore [no-any-return]
+
+    def _get_dependencies(self) -> list[str]:
+        """Fetches dependencies following [PEP631](https://peps.python.org/pep-0631/) format."""
+        return self.raw.get("project", {}).get("dependencies", [])  # type: ignore [no-any-return]
+
+    def _get_dependency_groups(self) -> dict[str, list[str]]:
+        return self.raw.get("project", {}).get("dependency-groups", {})  # type: ignore [no-any-return]
+
+    def _get_optional_dependencies(self) -> dict[str, list[str]]:
+        return self.raw.get("project", {}).get("optional-dependencies", {})  # type: ignore [no-any-return]
+
+    def set_path_dependencies_to_version(self, version: str) -> None:
+        """
+        Walks through the `[project.dependencies]`, `[project.dependency-groups]`
+        and `[project.optional-dependencies]` groups to replace all path and workspace sources
+        with proper index dependencies using the specified `version` string.
+
+        Based on [PEP631](https://peps.python.org/pep-0631/) for dependencies and optional-dependencies,
+        and [PEP735](https://peps.python.org/pep-0735/) for dependency-groups.
+        """
+
+        sources = self._get_sources()
+        dependencies = self._get_dependencies()
+        dependency_groups = self._get_dependency_groups()
+        optional_dependencies = self._get_optional_dependencies()
+        sources_to_rm: list[str] = []
+        for source, params in sources.items():
+            # TODO(Ghelfi): Check if entry with `path` is within the current project
+            if "workspace" in params or "path" in params:
+                sources_to_rm.append(source)
+                if (index := dependencies.index(source)) is not None:
+                    dependencies[index] = f"{source}=={version}"
+                for key, deps in dependency_groups.items():
+                    if (index := deps.index(source)) is not None:
+                        dependency_groups[key][index] = f"{source}=={version}"
+                for key, deps in optional_dependencies.items():
+                    if (index := deps.index(source)) is not None:
+                        optional_dependencies[key][index] = f"{source}=={version}"
+
+        for elem in sources_to_rm:
+            sources.pop(elem)
+
 
 class UvPythonBuildSystem(PythonBuildSystem):
     """
