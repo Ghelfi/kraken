@@ -204,7 +204,7 @@ class UvPyprojectHandler(PyprojectHandler):
         return self.raw.get("project", {}).get("dependencies", [])  # type: ignore [no-any-return]
 
     def _get_dependency_groups(self) -> dict[str, list[str]]:
-        return self.raw.get("project", {}).get("dependency-groups", {})  # type: ignore [no-any-return]
+        return self.raw.get("dependency-groups", {})
 
     def _get_optional_dependencies(self) -> dict[str, list[str]]:
         return self.raw.get("project", {}).get("optional-dependencies", {})  # type: ignore [no-any-return]
@@ -223,18 +223,21 @@ class UvPyprojectHandler(PyprojectHandler):
         dependencies = self._get_dependencies()
         dependency_groups = self._get_dependency_groups()
         optional_dependencies = self._get_optional_dependencies()
-        sources_to_rm: list[str] = []
+        sources_to_rm: set[str] = set()
         for source, params in sources.items():
             # TODO(Ghelfi): Check if entry with `path` is within the current project
             if "workspace" in params or "path" in params:
-                sources_to_rm.append(source)
-                if (index := dependencies.index(source)) is not None:
+                sources_to_rm.add(source)
+                if source in dependencies:
+                    index = dependencies.index(source)
                     dependencies[index] = f"{source}=={version}"
                 for key, deps in dependency_groups.items():
-                    if (index := deps.index(source)) is not None:
+                    if source in deps:
+                        index = deps.index(source)
                         dependency_groups[key][index] = f"{source}=={version}"
                 for key, deps in optional_dependencies.items():
-                    if (index := deps.index(source)) is not None:
+                    if source in deps:
+                        index = deps.index(source)
                         optional_dependencies[key][index] = f"{source}=={version}"
 
         for elem in sources_to_rm:

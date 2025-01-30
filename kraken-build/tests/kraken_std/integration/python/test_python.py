@@ -207,7 +207,9 @@ def test__python_project__upgrade_relative_import_version(
         # Check if generated files store proper version.
         metadata_file = tar.extractfile(f"{formatted_project_name}-{build_as_version}/PKG-INFO")
         assert metadata_file is not None, ".tar.gz file does not contain an 'PKG-INFO'"
-        assert f"Requires-Dist: uv-project=={build_as_version}" in metadata_file.read().decode("UTF-8")
+        metadata = metadata_file.read().decode("UTF-8")
+        assert f"Requires-Dist: uv-project=={build_as_version}" in metadata
+        assert f"Requires-Dist: uv-project=={build_as_version}; extra == 'opt'" in metadata
 
 
 M = TypeVar("M", PdmPyprojectHandler, PoetryPyprojectHandler)

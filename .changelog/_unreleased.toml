@@ -9,3 +9,9 @@ id = "a46ae7eb-bfd4-4a1c-b8b3-e6d2ebc5e3a9"
 type = "fix"
 description = "Maturin: set always the venv interpreter on all compilations - fixes Windows cross-compilations"
 author = "thomas.pellissier-tanon@helsing.ai"
+
+[[entries]]
+id = "c1cdc569-9c2f-439a-b422-4690063c13d7"
+type = "fix"
+description = "Fix uv version bump"
+author = "alexandre.ghelfi@helsing.ai"
