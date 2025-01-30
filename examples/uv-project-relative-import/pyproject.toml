@@ -13,7 +13,7 @@ dev = [
     "uv-project",
 ]
 
-[optional-dependencies]
+[project.optional-dependencies]
 opt = [
     "uv-project",
 ]

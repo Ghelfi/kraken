@@ -47,7 +47,7 @@ dev = [
     "uv-project-relative-import-dev",
 ]
 
-[optional-dependencies]
+[project.optional-dependencies]
 opt = [
     "uv-project-relative-import-opt",
 ]
@@ -187,4 +187,4 @@ def test__UvPyprojectHandler__set_path_dependencies_to_version() -> None:
 
     assert f"uv-project-relative-import=={version_to_bump}" in handler.raw["project"]["dependencies"]
     assert f"uv-project-relative-import-dev=={version_to_bump}" in handler.raw["dependency-groups"]["dev"]
-    assert f"uv-project-relative-import-opt=={version_to_bump}" in handler.raw["optional-dependencies"]["opt"]
+    assert f"uv-project-relative-import-opt=={version_to_bump}" in handler.raw["optional-dependencies"]["project"]["opt"]
