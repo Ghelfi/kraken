@@ -223,11 +223,11 @@ class UvPyprojectHandler(PyprojectHandler):
         dependencies = self._get_dependencies()
         dependency_groups = self._get_dependency_groups()
         optional_dependencies = self._get_optional_dependencies()
-        sources_to_rm: list[str] = []
+        sources_to_rm: set[str] = set()
         for source, params in sources.items():
             # TODO(Ghelfi): Check if entry with `path` is within the current project
             if "workspace" in params or "path" in params:
-                sources_to_rm.append(source)
+                sources_to_rm.add(source)
                 if source in dependencies:
                     index = dependencies.index(source)
                     dependencies[index] = f"{source}=={version}"

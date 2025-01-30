@@ -8,6 +8,16 @@ dependencies = [
     "uv-project",
 ]
 
+[dependency-groups]
+dev = [
+    "uv-project",
+]
+
+[optional-dependencies]
+opt = [
+    "uv-project",
+]
+
 [tool.uv.sources]
 uv-project = { path = "../uv-project", editable = true }
 

@@ -45,8 +45,16 @@ dependencies = [
     { name = "uv-project" },
 ]
 
+[package.dev-dependencies]
+dev = [
+    { name = "uv-project" },
+]
+
 [package.metadata]
 requires-dist = [
     { name = "tqdm", specifier = ">=4.66.5" },
     { name = "uv-project", editable = "../uv-project" },
 ]
+
+[package.metadata.requires-dev]
+dev = [{ name = "uv-project", editable = "../uv-project" }]
