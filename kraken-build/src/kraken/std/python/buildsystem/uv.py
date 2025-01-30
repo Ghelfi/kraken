@@ -228,13 +228,16 @@ class UvPyprojectHandler(PyprojectHandler):
             # TODO(Ghelfi): Check if entry with `path` is within the current project
             if "workspace" in params or "path" in params:
                 sources_to_rm.append(source)
-                if (index := dependencies.index(source)) is not None:
+                if source in dependencies:
+                    index = dependencies.index(source)
                     dependencies[index] = f"{source}=={version}"
                 for key, deps in dependency_groups.items():
-                    if (index := deps.index(source)) is not None:
+                    if source in deps:
+                        index = deps.index(source)
                         dependency_groups[key][index] = f"{source}=={version}"
                 for key, deps in optional_dependencies.items():
-                    if (index := deps.index(source)) is not None:
+                    if source in deps:
+                        index = deps.index(source)
                         optional_dependencies[key][index] = f"{source}=={version}"
 
         for elem in sources_to_rm:
