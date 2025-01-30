@@ -204,10 +204,10 @@ class UvPyprojectHandler(PyprojectHandler):
         return self.raw.get("project", {}).get("dependencies", [])  # type: ignore [no-any-return]
 
     def _get_dependency_groups(self) -> dict[str, list[str]]:
-        return self.raw.get("project", {}).get("dependency-groups", {})  # type: ignore [no-any-return]
+        return self.raw.get("dependency-groups", {})  # type: ignore [no-any-return]
 
     def _get_optional_dependencies(self) -> dict[str, list[str]]:
-        return self.raw.get("project", {}).get("optional-dependencies", {})  # type: ignore [no-any-return]
+        return self.raw.get("optional-dependencies", {})  # type: ignore [no-any-return]
 
     def set_path_dependencies_to_version(self, version: str) -> None:
         """
