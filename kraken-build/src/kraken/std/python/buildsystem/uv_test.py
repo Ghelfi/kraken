@@ -32,6 +32,33 @@ explicit = true
 """
 
 
+EXAMPLE_UV_PYPROJECT_RELATIVE_IMPORT = """
+[project]
+name = "uv-project"
+version = "0.1.0"
+
+dependencies = [
+    "tqdm>=4.66.5",
+    "uv-project-relative-import",
+]
+
+[dependency-groups]
+dev = [
+    "uv-project-relative-import-dev",
+]
+
+[optional-dependencies]
+opt = [
+    "uv-project-relative-import-opt",
+]
+
+[tool.uv.sources]
+uv-project-relative-import = { path = "../uv-project-relative-import", editable = true }
+uv-project-relative-import-dev = { path = "../uv-project-relative-import-dev", editable = true }
+uv-project-relative-import-opt = { path = "../uv-project-relative-import-opt", editable = true }
+"""
+
+
 def test__UvIndexes__to_env() -> None:
     indexes = UvIndexes.from_package_indexes(
         [
@@ -151,3 +178,13 @@ def test__UvPyprojectHandler__update_packages() -> None:
         {"url": "https://example.org/simple/"},
         {"url": "https://example.com/bar/simple/", "name": "bar", "explicit": True},
     ]
+
+
+def test__UvPyprojectHandler__set_path_dependencies_to_version() -> None:
+    handler = UvPyprojectHandler(TomlFile.read_string(EXAMPLE_UV_PYPROJECT_RELATIVE_IMPORT))
+    version_to_bump = "0.1.1"
+    handler.set_path_dependencies_to_version(version_to_bump)
+
+    assert f"uv-project-relative-import=={version_to_bump}" in handler.raw["project"]["dependencies"]
+    assert f"uv-project-relative-import-dev=={version_to_bump}" in handler.raw["dependency-groups"]["dev"]
+    assert f"uv-project-relative-import-opt=={version_to_bump}" in handler.raw["optional-dependencies"]["opt"]
