@@ -9,3 +9,9 @@ id = "cac87925-0145-4281-a719-beac302c1d7e"
 type = "breaking change"
 description = "pytest: don't scan `src/`"
 author = "antoine.broyelle@helsing.ai"
+
+[[entries]]
+id = "2c4f01f6-5d12-428f-8d36-f12a4f4dd327"
+type = "fix"
+description = "Clean build directory before building with uv"
+author = "alexandre.ghelfi@helsing.ai"
